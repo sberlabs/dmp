@@ -1,0 +1,39 @@
+{:global {:logging-config "./dev-resources/logback-dev.xml"}
+
+ :nrepl {:enabled true}
+
+ :webserver {:host "localhost"
+             :port 8080}
+
+ :web-router-service {:io.sberlabs.dmp-pixel-web-service/pixel-web-service "/img"}
+
+ :pixel {:pixel-base64 "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
+         :content-type "image/png"
+         :cookie-name  "sberlabspx"
+         :sync-expiration-time 2592000
+         :cookie-sync-key-tmpl "c=sync:p=rutarget:t={id}"
+         :cookie-sync-url-tmpl "tag.rutarget.ru/tag?event=sync&external_visitor={id}&partner=sberlabs"}
+
+ :redis {:host "localhost"
+         :port 6379}
+
+ :avro {:schema {:type :record
+                       :name "PixelLogRecord"
+                       :fields [{:name "ts" :type :long}
+                                {:name "id" :type :string}
+                                {:name "ip" :type :string}
+                                {:name "ua" :type :string}]}
+        :parser {:ts :unix-time-ms
+                 :id [:res :cookies "sberlabspx" :value]
+                 :ip [:req :remote-addr]
+                 :ua [:req :headers "user-agent"]}
+        :repo-url "http://hotel:2876/schema-repo"}
+
+ :kafka {:broker {:host "localhost",
+                  :port 9092}
+         :topic "pixel-log"
+         :partitions 3
+         :camus-magic-byte 0}
+
+ :zmq-proxy {:host "bravo"
+             :port 5353}}

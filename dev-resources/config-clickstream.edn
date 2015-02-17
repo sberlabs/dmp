@@ -1,0 +1,45 @@
+{:global {:logging-config "./dev-resources/logback-dev.xml"}
+
+ :webserver {:host "localhost"
+             :port 8080}
+
+ :web-router-service {:io.sberlabs.dmp-pixel-web-service/pixel-web-service "/img"}
+
+ :pixel {:pixel-base64 "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
+         :content-type "image/png"
+         :cookie-name  "sberlabspx"
+         :sync-expiration-time 2592000
+         :cookie-sync-key-tmpl "c=sync:p=rutarget:t={id}"
+         :cookie-sync-url-tmpl "tag.rutarget.ru/tag?event=sync&external_visitor={id}&partner=sberlabs"}
+
+ :redis {:host "localhost"
+         :port 6379}
+
+ :avro {:schema {:type "record"
+                 :name "Rutarget"
+                 :namespace "io.sberlabs.records"
+                 :doc "Schema for visitors event stream from Rutarget.ru"
+                 :fields [{:name "id" :type :string}
+                          {:name "url" :type :string}
+                          {:name "ip" :type :string}
+                          {:name "ip_trunc" :type :boolean :default false}
+                          {:name "ua" :type :string}
+                          {:name "ts" :type :long}]}
+        :parser {:ts [:ts]
+                 :id [:id]
+                 :url [:url]
+                 :ua [:ua]
+                 :ip [:ip]
+                 :ip-trunc [:ip_trunc]}
+        :repo-url "http://hotel:2876/schema-repo"}
+
+ :kafka {:properties {:metadata.broker.list "localhost:9092"
+                      :serializer.class "kafka.serializer.DefaultEncoder"
+                      :key.serializer.class "kafka.serializer.StringEncoder"
+                      :partitioner.class "ConsistentHashPartitioner"
+                      :request.required.acks "1"}
+         :topic "rutarget"
+         :camus-magic-byte 0}
+
+ :zmq-proxy {:host "bravo"
+             :port 5353}}
